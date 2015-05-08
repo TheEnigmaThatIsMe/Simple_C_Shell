@@ -51,14 +51,23 @@ int main(){
    	if (strchr(invalid_characters, *buffer)){
    		commandToken = "./";
    	}
+   	
+   	//error check for a NULL command
+   	while(commandToken == NULL){
+		printf("ERROR: Command is NULL\n");
+		printf("\nPlease enter a command: ");
+		fgets(buffer, nbytes, stdin);
+		strcpy(command, buffer);
+		commandToken = strtok(command, "./ \n");
+	}
 	//check for pipe character
 	if (strchr(pipeCharacter, *buffer) == NULL){
 		//while commandToken is not exit
 		while (strcmp(commandToken, exit) != 0){
-			
+		
 			//tokenize buffer for the first time to get past command
 			token = strtok(buffer, "./ \n");
-		
+	
 			//PRINT WORKING DIRECTORY COMMAND
 			if (strcmp(commandToken, pwd) == 0)
 			{
@@ -77,13 +86,13 @@ int main(){
 					if ((pid = wait(&status)) == -1)
 												 /* Wait for child process.*/
 					   perror("wait error\n");
-	
+
 					else {                       /* Check status.                */
 					   if (WIFSIGNALED(status) != 0)
 						  printf("Child process ended because of signal %d\n",
 								  WTERMSIG(status));
 					   else if (WIFEXITED(status) != 0){}
-					  
+				  
 					   else
 						  printf("Child process did not end normally\n");
 					}
@@ -100,7 +109,7 @@ int main(){
 				token = strtok(NULL, " \n");
 				if(moveDirectories(token) != 0){}
 			}
-		
+	
 			//LIST DIRECTORY COMMAND
 			else if (strcmp(commandToken, ls) == 0)
 			{
@@ -121,13 +130,13 @@ int main(){
 					if ((pid = wait(&status)) == -1)
 												 /* Wait for child process.*/
 					   perror("wait error\n");
-	
+
 					else {                       /* Check status.                */
 					   if (WIFSIGNALED(status) != 0)
 						  printf("Child process ended because of signal %d\n",
 								  WTERMSIG(status));
 					   else if (WIFEXITED(status) != 0){}
-		
+	
 					   else
 						  printf("Child process did not end normally\n");
 					}
@@ -138,11 +147,11 @@ int main(){
 				//intialize substring and filename params
 				char* substring = NULL;
 				char* filename = NULL;
-			
+		
 				//get substring and filename to grep
 				substring = strtok(NULL, " \n");
 				filename = strtok(NULL, " \n");
-			
+		
 				if ((pid = fork()) == -1) {
 					  perror("fork error");
 					  _exit(EXIT_FAILURE);
@@ -157,13 +166,13 @@ int main(){
 					if ((pid = wait(&status)) == -1)
 												 /* Wait for child process.*/
 					   perror("wait error\n");
-	
+
 					else {                       /* Check status.                */
 					   if (WIFSIGNALED(status) != 0)
 						  printf("Child process ended because of signal %d\n",
 								  WTERMSIG(status));
 					   else if (WIFEXITED(status) != 0){}
-			
+		
 					   else
 						  printf("Child process did not end normally\n");
 					}
@@ -196,7 +205,7 @@ int main(){
 			else{
 				printf("Not a valid command! Input help to see a list of valid commands\n");
 			}
-	
+
 			/*bottom of while loop to have user enter another command after
 				a previous command either executes or fails*/
 			printf("\nPlease enter a command: ");
@@ -209,6 +218,13 @@ int main(){
 			if (strchr(pipeCharacter, *buffer) != NULL) {
 				break;
 			}
+			while(commandToken == NULL){
+				printf("ERROR: Command is NULL\n");
+				printf("\nPlease enter a command: ");
+				fgets(buffer, nbytes, stdin);
+				strcpy(command, buffer);
+				commandToken = strtok(command, "./ \n");
+			}
 		}
 	}
 	//begin laying pipe
@@ -217,12 +233,11 @@ int main(){
 		//take second command string after | and set it = str2
 		//parse out actual command from str1 (i.e. ls, cd, etc)
 		//parse out actual command from str2 (i.e. ls, cd, etc)
-		
+	
 		//fork process and execute str1 command as child process
 		//return value of first command and send through pipe for use in second command, effectively ending child process
 		//Use pipe passed value to fork and execute str2 command
 	}
-	
 	//User command is exit
 	printf("\nEXITING\n");
 	return 0;

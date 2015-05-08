@@ -12,9 +12,9 @@ help (displays all commands)
 
 To run:
 
-Download all files
-Place them in an executable C environment
-Change directory into build folder
+Download all files\n
+Place them in an executable C environment\n
+Change directory into build folder\n
 Run command ‘cmake ..’
 Run command ‘make’
 Run command ‘./shell’ to execute shell program

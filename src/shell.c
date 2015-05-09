@@ -24,6 +24,7 @@ int main(){
 	char grep[4];
 	char exec[2];
 	char help[4];
+	char If[2];
 	char* argv[100];
 	char* token = NULL;
 	char* commandToken = NULL;
@@ -43,6 +44,7 @@ int main(){
    	strcpy(grep, "grep");
    	strcpy(help, "help");
    	strcpy(exec, "./");
+   	strcpy(If, "If");
    	
    	//tokenize command looking for new line or executable command
    	commandToken = strtok(command, "./ \n");
@@ -201,6 +203,10 @@ int main(){
 				printf("./<executable file name> (executes a file)\n");
 				printf("exit (exits shell program)\n");
 				printf("-------------------------------------------------------------------------\n");
+			}
+			//read the README for this one
+			else if (strcmp(commandToken, If)==0){
+				printf("\nDoes a bear shit in the woods?\n");
 			}
 			else{
 				printf("Not a valid command! Input help to see a list of valid commands\n");

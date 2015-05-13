@@ -20,3 +20,5 @@ int readDirectory(char* directory);
 int grepCommand(char* substring, char* filename);
 
 void execute(char **argv);
+
+int CAT(const char *fname, const char *fname2);

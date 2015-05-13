@@ -19,6 +19,7 @@ int main(){
 	char command[100];
 	char exit[4];
 	char pwd[3];
+	char cat[3];
 	char cd[2];
 	char ls[2];
 	char grep[4];
@@ -34,11 +35,13 @@ int main(){
 	//create invalid characters to search for in commands
 	const char *invalid_characters = "./";
 	const char *pipeCharacter = "|";
+	const char *catCharacter = ">";
 	
 	//copy command value into initialized variables
 	strcpy(command, buffer);
    	strcpy(exit, "exit");
    	strcpy(pwd, "pwd");
+   	strcpy(cat, "cat");
    	strcpy(cd, "cd");
    	strcpy(ls, "ls");
    	strcpy(grep, "grep");
@@ -52,6 +55,9 @@ int main(){
    	//if buffer contains invalid characters set commandToken to executable command
    	if (strchr(invalid_characters, *buffer)){
    		commandToken = "./";
+   	}
+   	if (strchr(catCharacter, *buffer)){
+   		printf("We have a cat token\n");
    	}
    	
    	//error check for a NULL command
@@ -193,6 +199,50 @@ int main(){
 					printf("NOT EXECUTABLE!\n");
 				}
 			}
+			
+			//CAT COMMAND
+			else if (strcmp(commandToken, cat) == 0){
+			
+				
+				char* token2 = NULL;
+				char* token3 = NULL;
+				token = strtok(NULL, " \n");
+				
+				//token2 should be '>' character
+				token2 = strtok(NULL, " \n");
+				
+				if ((pid = fork()) == -1) {
+					  perror("fork error");
+					  _exit(EXIT_FAILURE);
+				}
+				else if (pid == 0) { /* start of child process      */
+					if(token2 == NULL){
+						if(CAT(token, token2) != 0) {return -1;}
+						return 0;
+					}
+					else{
+						token3 = strtok(NULL, " \n");
+						//contains '>' character
+						if (CAT(token, token3) != 0) {return -1;}
+						return 0;
+					}
+				}
+				else { /* start of parent process     */
+					if ((pid = wait(&status)) == -1)
+												 /* Wait for child process.*/
+					   perror("wait error\n");
+
+					else {                       /* Check status.                */
+					   if (WIFSIGNALED(status) != 0)
+						  printf("Child process ended because of signal %d\n",
+								  WTERMSIG(status));
+					   else if (WIFEXITED(status) != 0){}
+		
+					   else
+						  printf("Child process did not end normally\n");
+					}
+				}
+			}
 			else if (strcmp(commandToken, help) == 0){
 				printf("\n-------------------------------------------------------------------------\n");
 				printf("Valid commands:\n");
@@ -201,6 +251,7 @@ int main(){
 				printf("ls OR ls <directory name> (displays list of directories or sub directories)\n");
 				printf("grep <substring> <file name> (finds substring within a file)\n");
 				printf("./<executable file name> (executes a file)\n");
+				printf("cat <file name> OR cat <file name> > <file name> (prints out contents of the file OR takes contents from first file and puts it into second)\n");
 				printf("exit (exits shell program)\n");
 				printf("-------------------------------------------------------------------------\n");
 			}
@@ -221,7 +272,7 @@ int main(){
 			if (strchr(invalid_characters, *buffer)){
 				commandToken = "./";
 			}
-			if (strchr(pipeCharacter, *buffer) != NULL) {
+			else if (strchr(pipeCharacter, *buffer) != NULL) {
 				break;
 			}
 			while(commandToken == NULL){
@@ -373,4 +424,53 @@ void  execute(char **argv){
      else {                                  /* for the parent:      */
           while (wait(&status) != pid);      /* wait for completion  */
      }
+}
+
+//print out file contents or copy contents of file1 to file2 (COMMAND: cat <file name> OR cat <file name> > <file name>)
+int CAT(const char *fname, const char *fname2) {
+	char line[256];
+	FILE *fp;
+	FILE *fp2;
+	
+	fp=fopen(fname, "r");
+	
+	if(fname2 != NULL){
+		fp2=fopen(fname2, "w");
+	}
+	
+	if(fname2 == NULL){
+		if(fp == NULL) {
+				printf("%s: No such file or directory\n", fname);
+				return 1;
+		}
+		else{
+			/*
+			* read file and feed contents to STDIO
+			*/
+			while(fgets(line, sizeof(line), fp)) {
+				printf("LINE: %s\n", line);
+			}
+			fclose(fp);
+			return 0;
+		}
+	}
+	else{
+		if(fp == NULL) {
+				printf("%s: No such file or directory\n", fname);
+				return 1;
+		}
+		else if(fp2 == NULL){
+				printf("%s: No such file or directory\n", fname2);
+				return 1;
+		}
+		else{
+			while(fgets(line, sizeof(line), fp)) {
+				fputs(line, fp2);
+			}
+		}
+		fclose(fp);
+		fclose(fp2);
+		return 0;
+	}
+	return 1;
 }

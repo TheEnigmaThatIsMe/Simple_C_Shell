@@ -18,7 +18,7 @@ to a fair maiden gale. She resides at St. Mary's Church in the hollow of the whi
 also know as Llanfairpwllgwyngyll
 
 This Shell only responds to poking and prodding with the standard input commands.
-These exotic commands come in such flavors as pwd, cd, ls, exit, and grep. Please be aware that the Shell is not
+These exotic commands come in such flavors as pwd, cd, ls, exit, grep, and cat. Please be aware that the Shell is not
 at its final form. This means it cannot perform the very powerful spirit bomb pipe command. Treat the Shell with the utmost respect
 and it shell treat you like what ever it damn well pleases (seriously, I can't contain this son of a b*tch).
 
